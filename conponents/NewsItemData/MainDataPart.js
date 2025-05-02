@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { fetchData } from './ApiCalling';
-import { FlatList, Image, Text, View, StyleSheet } from 'react-native';
+import { FlatList, Image, Text, View, StyleSheet, TouchableHighlight, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 
+
+
 const MainDataPart = ({ route }) => {
+
+    console.log("routes", route)
     const { colors } = useTheme();
     const { category, API_Key } = route.params;
     const [data, setData] = useState([]);
+
+    const [loading, setLoading] = useState(true)
 
     const newsData = async () => {
         let response = await fetchData(category, API_Key);
@@ -15,30 +21,37 @@ const MainDataPart = ({ route }) => {
 
     useEffect(() => {
         newsData();
+        setTimeout(() => {
+            setLoading(false)
+        }, 2000);
     }, []);
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <Text style={[styles.text, { color: colors.text }]}>{route.name} - News</Text>
-            <FlatList
-                data={data}
-                keyExtractor={(item, index) => item.url + index}
-                renderItem={({ item }) => {
-                    const imageUrl = item.urlToImage
-                        ? item.urlToImage
-                        : 'https://platform.theverge.com/wp-content/uploads/sites/2/2025/05/acastro_STK057_02.jpg?quality=90&strip=all&crop=0%2C10.732984293194%2C100%2C78.534031413613&w=1200';
-                    return (
-                        <View style={[styles.card, { backgroundColor: colors.card }]}>
-                            <Image source={{ uri: imageUrl }} style={styles.image} />
-                            <View style={styles.content}>
-                                <Text style={[styles.title, { color: colors.text }]}>{item.title}</Text>
-                                <Text style={[styles.source, { color: colors.text }]}>{item.description}</Text>
-                                <Text style={[styles.publishAt, { color: colors.text }]}>{item.publishedAt}</Text>
+            {loading ? (<ActivityIndicator color={"black"} />) :
+                (<FlatList
+                    data={data}
+                    keyExtractor={(item, index) => item.url + index}
+                    renderItem={({ item }) => {
+                        const imageUrl = item.urlToImage
+                            ? item.urlToImage
+                            : 'https://platform.theverge.com/wp-content/uploads/sites/2/2025/05/acastro_STK057_02.jpg?quality=90&strip=all&crop=0%2C10.732984293194%2C100%2C78.534031413613&w=1200';
+                        return (
+                            <View style={[styles.card, { backgroundColor: colors.card }]}>
+                                <Image source={{ uri: imageUrl }} style={styles.image} />
+                                <View style={styles.content}>
+                                    <Text style={[styles.title, { color: colors.text }]}>{item.title}</Text>
+                                    <Text style={[styles.source, { color: colors.text }]}>{item.description}</Text>
+                                    <Text style={[styles.publishAt, { color: colors.text }]}>{item.publishedAt}</Text>
+
+                                </View>
+                                <View>
+                                </View>
                             </View>
-                        </View>
-                    );
-                }}
-            />
+                        );
+                    }}
+                />)}
         </View>
     );
 };
@@ -81,7 +94,16 @@ const styles = StyleSheet.create({
     publishAt: {
         fontSize: 12,
         marginTop: 4
-    }
+    },
+    // btnRead: {
+    //     backgroundColor: "yellow",
+    //     margin: 10,
+    //     fontSize: 20,
+    //     borderWidth: 2,
+    //     borderRadius: 10,
+    //     textAlign: "center",
+
+    // }
 });
 
 export default MainDataPart;
