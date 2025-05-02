@@ -1,26 +1,25 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { fetchData } from './ApiCalling';
 import { FlatList, Image, Text, View, StyleSheet } from 'react-native';
-
+import { useTheme } from '@react-navigation/native';
 
 const MainDataPart = ({ route }) => {
-    console.log("Routes",route)
+    const { colors } = useTheme();
     const { category, API_Key } = route.params;
     const [data, setData] = useState([]);
 
+    const newsData = async () => {
+        let response = await fetchData(category, API_Key);
+        setData(response);
+    };
 
-    let newsData = async () => {
-        let response = await fetchData(category, API_Key);;
-        setData(response)
-
-    }
     useEffect(() => {
-        newsData()
-    }, [])
+        newsData();
+    }, []);
 
     return (
-        <View>
-            <Text style={styles.text}>{route.name} - News</Text>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
+            <Text style={[styles.text, { color: colors.text }]}>{route.name} - News</Text>
             <FlatList
                 data={data}
                 keyExtractor={(item, index) => item.url + index}
@@ -29,30 +28,31 @@ const MainDataPart = ({ route }) => {
                         ? item.urlToImage
                         : 'https://platform.theverge.com/wp-content/uploads/sites/2/2025/05/acastro_STK057_02.jpg?quality=90&strip=all&crop=0%2C10.732984293194%2C100%2C78.534031413613&w=1200';
                     return (
-                        <View style={styles.card}>
+                        <View style={[styles.card, { backgroundColor: colors.card }]}>
                             <Image source={{ uri: imageUrl }} style={styles.image} />
                             <View style={styles.content}>
-                                <Text style={styles.title}>{item.title}</Text>
-                                <Text style={styles.source}>{item.description}</Text>
-                                <Text style={styles.publishAt}>{item.publishedAt}</Text>
+                                <Text style={[styles.title, { color: colors.text }]}>{item.title}</Text>
+                                <Text style={[styles.source, { color: colors.text }]}>{item.description}</Text>
+                                <Text style={[styles.publishAt, { color: colors.text }]}>{item.publishedAt}</Text>
                             </View>
                         </View>
                     );
                 }}
             />
         </View>
-    )
-}
-
+    );
+};
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    },
     text: {
-        textAlign: "center",
+        textAlign: 'center',
         fontSize: 30,
         marginTop: 10
     },
     card: {
-        backgroundColor: '#fff',
         borderRadius: 12,
         overflow: 'hidden',
         marginBottom: 15,
@@ -76,12 +76,12 @@ const styles = StyleSheet.create({
         marginBottom: 4
     },
     source: {
-        fontSize: 12,
-        color: '#888'
+        fontSize: 12
     },
     publishAt: {
         fontSize: 12,
-        color: '#888'
+        marginTop: 4
     }
 });
-export default MainDataPart
+
+export default MainDataPart;
