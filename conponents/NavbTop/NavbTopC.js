@@ -1,10 +1,8 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { DarkTheme, DefaultTheme, NavigationContainer } from '@react-navigation/native'
 import React, { useState } from 'react'
-import GeneralData from '../NewsItemData/GeneralData'
-import Bussiness from '../NewsItemData/Bussiness'
 import MainDataPart from '../NewsItemData/MainDataPart'
-import { Button, StyleSheet, Text, TouchableHighlight, TouchableOpacity } from 'react-native';
+import {StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 
 const API_Key = "4deb9f466b364a5f91e1a59caf5a8eb5"
